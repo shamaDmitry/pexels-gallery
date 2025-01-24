@@ -1,16 +1,18 @@
-export const MediaViewer = ({ type, media }) => {
-  if (!media) return null;
+import { Photo, Video } from 'pexels'
+import { FC } from 'react'
 
-  if (type.name === "videos" && "video_files" in media) {
+interface MediaViewerProps {
+  type: { name: string; id: number }
+  media: Photo | Video | null
+}
+
+export const MediaViewer: FC<MediaViewerProps> = ({ type, media }) => {
+  if (!media) return null
+
+  if (type.name === 'videos' && 'video_files' in media) {
     return (
       <>
-        <video
-          src={media?.video_files[0].link}
-          autoPlay
-          muted
-          loop
-          className="w-full h-full object-cover"
-        />
+        <video src={media?.video_files[0].link} autoPlay muted loop className="w-full h-full object-cover" />
 
         <a
           href={media.user?.url}
@@ -20,16 +22,12 @@ export const MediaViewer = ({ type, media }) => {
           Video by {media.user?.name}
         </a>
       </>
-    );
+    )
   }
-  if (type.name === "photos" && "src" in media) {
+  if (type.name === 'photos' && 'src' in media) {
     return (
       <>
-        <img
-          className="w-full h-full object-cover"
-          src={media?.src?.landscape}
-          alt={media?.alt || ""}
-        />
+        <img className="w-full h-full object-cover" src={media?.src?.landscape} alt={media?.alt || ''} />
 
         <a
           href={media?.photographer_url}
@@ -39,6 +37,6 @@ export const MediaViewer = ({ type, media }) => {
           Photo by {media?.photographer}
         </a>
       </>
-    );
+    )
   }
-};
+}

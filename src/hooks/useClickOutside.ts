@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 
-function useClickOutside(ref, callBack) {
+function useClickOutside(ref: React.RefObject<HTMLElement>, callBack: () => void) {
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
         callBack()
       }
     }
 
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         console.log('ref', ref)
 
@@ -26,5 +26,4 @@ function useClickOutside(ref, callBack) {
     }
   }, [ref, callBack])
 }
-
 export default useClickOutside
