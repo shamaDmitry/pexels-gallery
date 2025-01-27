@@ -6,8 +6,8 @@ import { useSearch, UseSearchInterface } from '@/stores/useSearch'
 import useClickOutside from '@/hooks/useClickOutside'
 
 const data = [
-  { id: 1, name: 'videos' },
-  { id: 2, name: 'photos' }
+  { id: 1, name: 'photos' },
+  { id: 2, name: 'videos' }
 ]
 
 const Search = () => {

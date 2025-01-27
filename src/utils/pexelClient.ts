@@ -1,7 +1,7 @@
-import { createClient } from "pexels";
+// import { createClient } from "pexels";
 
-if (!import.meta.env.VITE_API_KEY) {
-  throw new Error("Missing API key");
-}
+// if (!import.meta.env.VITE_API_KEY) {
+//   throw new Error("Missing API key");
+// }
 
-export const pexelClient = createClient(import.meta.env.VITE_API_KEY);
+// export const pexelClient = createClient(import.meta.env.VITE_API_KEY);
