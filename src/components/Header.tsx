@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { FC, useEffect, useState } from 'react'
 import Search from '@/components/Search'
-// import { pexelClient } from '@/utils/pexelClient'
+import { pexelClient } from '@/utils/pexelClient'
 import { Headline } from '@/components/Headline'
 import { useSearch, UseSearchInterface } from '@/stores/useSearch'
 import { MediaViewer } from './MediaViewer'
@@ -12,6 +12,8 @@ export interface HeaderProps {
 }
 
 export const Header: FC<HeaderProps> = ({ className = '' }) => {
+  console.log(pexelClient)
+
   const [media, setMedia] = useState<Photo | Video | null>(null)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -22,25 +24,25 @@ export const Header: FC<HeaderProps> = ({ className = '' }) => {
 
     setIsLoading(true)
 
-    // if (searchType.name === 'photos') {
-    //   pexelClient.photos.curated({ per_page: 1 }).then((res) => {
-    //     setIsLoading(false)
+    if (searchType.name === 'photos') {
+      pexelClient.photos.curated({ per_page: 1 }).then((res) => {
+        setIsLoading(false)
 
-    //     if ('photos' in res) {
-    //       setMedia(res.photos[0] as Photo)
-    //     }
-    //   })
-    // }
+        if ('photos' in res) {
+          setMedia(res.photos[0] as Photo)
+        }
+      })
+    }
 
-    // if (searchType.name === 'videos') {
-    //   pexelClient.videos.popular({ per_page: 1 }).then((res) => {
-    //     setIsLoading(false)
+    if (searchType.name === 'videos') {
+      pexelClient.videos.popular({ per_page: 1 }).then((res) => {
+        setIsLoading(false)
 
-    //     if ('videos' in res) {
-    //       setMedia(res.videos[0] as Video)
-    //     }
-    //   })
-    // }
+        if ('videos' in res) {
+          setMedia(res.videos[0] as Video)
+        }
+      })
+    }
   }, [searchType])
 
   return (
