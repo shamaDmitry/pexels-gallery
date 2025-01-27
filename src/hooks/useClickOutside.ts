@@ -10,8 +10,6 @@ function useClickOutside(ref: React.RefObject<HTMLElement>, callBack: () => void
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        console.log('ref', ref)
-
         callBack()
         ref?.current?.blur()
       }

@@ -11,9 +11,7 @@ export interface HeaderProps {
   className?: string
 }
 
-export const Header: FC<HeaderProps> = ({ className = '' }) => {
-  console.log(pexelClient)
-
+export const Header: FC<HeaderProps> = ({ className }) => {
   const [media, setMedia] = useState<Photo | Video | null>(null)
 
   const [isLoading, setIsLoading] = useState(false)

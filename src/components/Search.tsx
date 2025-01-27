@@ -1,37 +1,65 @@
-import { useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Search as SearchIcon, ChevronDownIcon, CheckIcon } from 'lucide-react'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import clsx from 'clsx'
 import { useSearch, UseSearchInterface } from '@/stores/useSearch'
-import useClickOutside from '@/hooks/useClickOutside'
+import { pexelClient } from '@/utils/pexelClient'
+import { Collection } from 'pexels'
+import { Headline } from './Headline'
+import { NavLink } from 'react-router'
+// import useClickOutside from '@/hooks/useClickOutside'
 
 const data = [
   { id: 1, name: 'photos' },
   { id: 2, name: 'videos' }
 ]
 
-const Search = () => {
+interface SearchProps {
+  className?: string
+}
+
+const Search: FC<SearchProps> = ({ className }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showDropDown, setShowDropDown] = useState(false) // Add new state variable
+  const [collections, setCollections] = useState<Collection[]>([])
 
   const inputRef = useRef(null)
-
-  const { searchHistory, setSearchHistory, searchType, setSearchType } = useSearch() as UseSearchInterface
+  const { recentSearch, setRecentSearch, searchType, setSearchType } = useSearch() as UseSearchInterface
 
   const handleSearch = () => {
     if (searchTerm.length > 0) {
-      setSearchHistory([...searchHistory, searchTerm])
+      setRecentSearch([...recentSearch, searchTerm])
 
       setSearchTerm('')
     }
   }
 
-  useClickOutside(inputRef, () => {
-    setShowDropDown(false)
-  })
+  // useClickOutside(inputRef, () => {
+  //   setShowDropDown(false)
+  // })
+
+  useEffect(() => {
+    pexelClient.collections.featured({ per_page: 4 }).then((res) => {
+      console.log('res', res)
+
+      if ('collections' in res) {
+        setCollections(res.collections)
+      }
+    })
+
+    // pexelClient.collections.media({ id: 'i09r4v4', type: 'videos', per_page: 50 }).then((res) => {
+    //   console.log(res)
+    // })
+
+    // pexelClient.collections.all({ per_page: 4 }).then((collections) => {
+    //   console.log('all', collections)
+    // })
+
+    return () => {}
+  }, [])
 
   return (
-    <div className="relative">
+    <div className={clsx('relative', className)}>
       <div className="flex items-center gap-2 p-2 rounded-lg shadow bg-white">
         <div className="relative">
           <Listbox value={searchType} onChange={setSearchType}>
@@ -88,8 +116,53 @@ const Search = () => {
 
       {showDropDown && (
         <div className="absolute top-full left-0 w-full bg-white p-4 border shadow z-10 mt-4 rounded-lg">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta quis laudantium natus quam qui, dignissimos
-          voluptatem provident veritatis molestiae obcaecati voluptate aspernatur excepturi nemo.
+          {recentSearch && recentSearch.length > 0 && (
+            <div className="mb-4">
+              <div className="flex justify-between items-center gap-4 mb-4">
+                <h3 className="text-lg font-semibold mb-2">Recent Searches</h3>
+
+                <button className="text-sm font-medium hover:opacity-70" onClick={() => setRecentSearch([])}>
+                  Clear
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {recentSearch.map((search, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-300 rounded-md px-2 py-1 text-sm flex items-center gap-1"
+                  >
+                    <SearchIcon className="size-4" />
+                    {search}
+                  </div>
+                ))}
+              </div>
+
+              <hr className="my-4" />
+
+              {collections.length > 0 && (
+                <>
+                  <Headline className="mb-2" tag="h3">
+                    Collections
+                  </Headline>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {collections.map((collection: Collection) => {
+                      return (
+                        <NavLink to={`collection/${collection.id}`} key={collection.id} className="">
+                          <Headline tag="h4">{collection.title}</Headline>
+
+                          <div className="text-sm">
+                            {collection.photos_count} photos / {collection.videos_count} videos
+                          </div>
+                        </NavLink>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
