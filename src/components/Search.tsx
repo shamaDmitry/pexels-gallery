@@ -46,16 +46,6 @@ const Search: FC<SearchProps> = ({ className }) => {
         setCollections(res.collections)
       }
     })
-
-    // pexelClient.collections.media({ id: 'i09r4v4', type: 'videos', per_page: 50 }).then((res) => {
-    //   console.log(res)
-    // })
-
-    // pexelClient.collections.all({ per_page: 4 }).then((collections) => {
-    //   console.log('all', collections)
-    // })
-
-    return () => {}
   }, [])
 
   return (
