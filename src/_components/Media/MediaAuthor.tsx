@@ -1,9 +1,9 @@
 import clsx from 'clsx'
-import { ChevronDown, User } from 'lucide-react'
+import { CheckIcon, ChevronDown, User } from 'lucide-react'
 import { Photo, Video } from 'pexels'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
 
@@ -16,7 +16,17 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const authorName = media.type === 'Video' ? media?.user?.name : media?.photographer
-  // const mediaUrl = media.type === 'Video' ? media.video_files : media.src
+  const mediaUrl =
+    media.type === 'Video'
+      ? media.video_files
+      : Object.entries(media.src).map(([key, value]) => ({
+          key,
+          value
+        }))
+
+  console.log('mediaUrl', mediaUrl)
+
+  const [selected, setSelected] = useState(null)
 
   // const handleDownload = () => {
   //   if (media.type === 'Photo') {
@@ -53,6 +63,7 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
       window.URL.revokeObjectURL(fileUrl)
     }
   }
+  console.log('selected', selected)
 
   return (
     <div
@@ -83,31 +94,37 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
               download
             </Button>
 
-            {/* <Button size="sm" className="rounded-l-none"></Button> */}
-
-            <Menu>
-              <MenuButton className={buttonVariants({ variant: 'default', size: 'sm', className: 'rounded-l-none' })}>
-                <ChevronDown className="transition-transform size-4" />
-              </MenuButton>
-
-              <MenuItems
-                anchor="bottom"
-                className={'w-48 bg-primary text-accent rounded-md text-sm font-medium px-4 py-2'}
+            <Listbox
+              value={selected}
+              onChange={(item) => {
+                setSelected(item)
+              }}
+            >
+              <ListboxButton
+                className={buttonVariants({ variant: 'default', size: 'sm', className: 'rounded-l-none' })}
               >
-                <MenuItem>
-                  {({ close }) => (
-                    <div
-                      onClick={(e) => {
-                        e.preventDefault()
-                        close()
-                      }}
+                {/* {selected ? selected : ''} */}
+                <ChevronDown className="transition-transform size-4" />
+              </ListboxButton>
+
+              <ListboxOptions
+                anchor="bottom end"
+                className={'w-48 bg-primary text-accent rounded-md text-sm font-medium px-4 py-2 z-50'}
+              >
+                {mediaUrl.map((item) => {
+                  return (
+                    <ListboxOption
+                      key={item.key}
+                      value={item}
+                      className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
                     >
-                      Read and accept
-                    </div>
-                  )}
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+                      <CheckIcon className="invisible size-4 text-white group-data-[selected]:visible" />
+                      <div className="text-sm/6 text-white">{item.key}</div>
+                    </ListboxOption>
+                  )
+                })}
+              </ListboxOptions>
+            </Listbox>
           </div>
         )}
 
