@@ -1,4 +1,4 @@
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, ListboxProps } from '@headlessui/react'
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import clsx from 'clsx'
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 import { forwardRef } from 'react'
@@ -8,6 +8,7 @@ export const Dropdown = forwardRef<
   {
     data: Array<{ name: string; [key: string]: any }>
     selected: { name: string; [key: string]: any }
+    setSelected: (item: { name: string; [key: string]: any }) => void
     className?: string
   }
 >(({ data = [], className, selected, setSelected }, ref) => {

@@ -40,8 +40,6 @@ const Search: FC<SearchProps> = ({ className }) => {
 
   useEffect(() => {
     pexelClient.collections.featured({ per_page: 4 }).then((res) => {
-      console.log('res', res)
-
       if ('collections' in res) {
         setCollections(res.collections)
       }

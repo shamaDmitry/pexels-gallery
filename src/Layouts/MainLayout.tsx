@@ -1,5 +1,5 @@
-import { Footer } from '@/components/Footer'
-import Navigation from '@/components/Navigation'
+import { Footer } from '@/_components/Footer'
+import Navigation from '@/_components/Navigation'
 import clsx from 'clsx'
 import { FC } from 'react'
 

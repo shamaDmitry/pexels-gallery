@@ -1,4 +1,4 @@
-import { Header } from '@/components/Header'
+import { Header } from '@/_components/Header'
 import { MainLayout } from '@/Layouts/MainLayout'
 import { FC } from 'react'
 

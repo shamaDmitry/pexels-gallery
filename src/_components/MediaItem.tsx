@@ -20,8 +20,8 @@ export const MediaItem: FC<MediaItemProps> = ({ media, isLoading }) => {
     const orientation = getMediaOrientation(media)
 
     return (
-      <div className="relative select-none aspect-auto">
-        <img src={media.src[orientation]} alt={media.alt ?? ''} />
+      <div className="border relative select-none aspect-auto transition-all min-h-48 flex flex-col overflow-hidden rounded-xl">
+        <img src={media.src[orientation]} alt={media.alt ?? ''} className="flex-1 object-cover" />
 
         <MediaAuthor className="absolute left-0 bottom-0 w-full" media={media} />
       </div>
@@ -50,7 +50,7 @@ export const MediaItem: FC<MediaItemProps> = ({ media, isLoading }) => {
 
     return (
       <div
-        className="cursor-pointer relative select-none transition-all aspect-video"
+        className="border cursor-pointer relative select-none transition-all aspect-video min-h-48 overflow-hidden rounded-xl"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

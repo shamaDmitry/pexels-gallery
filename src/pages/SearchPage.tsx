@@ -1,4 +1,4 @@
-import { Headline } from '@/components/Headline'
+import { Headline } from '@/_components/Headline'
 import { MainLayout } from '@/Layouts/MainLayout'
 import { FC } from 'react'
 
