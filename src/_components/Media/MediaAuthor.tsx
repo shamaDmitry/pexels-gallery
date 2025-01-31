@@ -1,51 +1,67 @@
 import clsx from 'clsx'
 import { CheckIcon, ChevronDown, User } from 'lucide-react'
 import { Photo, Video } from 'pexels'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
+import Spinner from '../Spinner'
+import { getSize } from '@/utils/getSize'
+
+export interface IDropDownPhotoData {
+  value: string
+  key: string
+}
+export interface IDropDownVideoData {
+  id: number
+  quality: 'hd' | 'sd' | 'hls'
+  file_type: 'string'
+  width: number | null
+  height: number | null
+  link: string
+  fps: number | null
+  size: number
+}
 
 interface MediaAuthorProps {
   className?: string
   media: (Photo & { type: 'Photo' }) | (Video & { type: 'Video' })
+  dropDownData: IDropDownPhotoData[] | IDropDownVideoData[]
 }
 
-export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
+const sortData = (data: IDropDownVideoData[]) => {
+  return [...data].sort((a: IDropDownVideoData, b: IDropDownVideoData) => {
+    if ('width' in a && 'width' in b) {
+      return (b.width || 0) - (a.width || 0)
+    }
+    return 0
+  })
+}
+
+export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media, dropDownData }) => {
   const [isProcessing, setIsProcessing] = useState(false)
-
   const authorName = media.type === 'Video' ? media?.user?.name : media?.photographer
-  const mediaUrl =
-    media.type === 'Video'
-      ? media.video_files
-      : Object.entries(media.src).map(([key, value]) => ({
-          key,
-          value
-        }))
 
-  console.log('mediaUrl', mediaUrl)
+  const [selectedPhotoValue, setSelectedPhotoValue] = useState<IDropDownPhotoData | null>(null)
+  const [selectedVideoValue, setSelectedVideoValue] = useState<IDropDownVideoData | null>(null)
 
-  const [selected, setSelected] = useState(null)
+  useEffect(() => {
+    if ((dropDownData as IDropDownPhotoData[]) && dropDownData?.length > 0) {
+      setSelectedPhotoValue(dropDownData[0] as IDropDownPhotoData)
+    }
 
-  // const handleDownload = () => {
-  //   if (media.type === 'Photo') {
-  //     // For photos, download the original size
-  //     window.open(media.src.original, '_blank')
-  //   }
+    if ((dropDownData as IDropDownVideoData[]) && dropDownData?.length > 0) {
+      const sortedVideoData = sortData(dropDownData as IDropDownVideoData[])
 
-  //   if (media.type === 'Video') {
-  //     // For videos, download the first video file
-  //     const videoUrl = media.video_files[0]?.link
-  //     if (videoUrl) {
-  //       window.open(videoUrl, '_blank')
-  //     }
-  //   }
-  // }
+      setSelectedVideoValue(sortedVideoData[0] as IDropDownVideoData)
+    }
+  }, [dropDownData])
 
   const handleDownload = async () => {
     setIsProcessing(true)
-    const url = media.type === 'Photo' ? media.src.original : media.video_files[0]?.link
+
+    const url = media.type === 'Photo' ? selectedPhotoValue?.value : selectedVideoValue?.link
     const extension = media.type === 'Photo' ? '.jpg' : '.mp4'
 
     if (url) {
@@ -63,7 +79,6 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
       window.URL.revokeObjectURL(fileUrl)
     }
   }
-  console.log('selected', selected)
 
   return (
     <div
@@ -91,35 +106,36 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
               }}
               className="rounded-r-none capitalize"
             >
+              {isProcessing && <Spinner size="xs" />}
               download
             </Button>
 
             <Listbox
-              value={selected}
+              value={selectedPhotoValue}
               onChange={(item) => {
-                setSelected(item)
+                setSelectedPhotoValue(item)
               }}
             >
               <ListboxButton
                 className={buttonVariants({ variant: 'default', size: 'sm', className: 'rounded-l-none' })}
               >
-                {/* {selected ? selected : ''} */}
                 <ChevronDown className="transition-transform size-4" />
               </ListboxButton>
 
               <ListboxOptions
                 anchor="bottom end"
-                className={'w-48 bg-primary text-accent rounded-md text-sm font-medium px-4 py-2 z-50'}
+                className={'w-48 bg-primary text-accent rounded-md text-sm font-medium px-2 py-2 z-50'}
               >
-                {mediaUrl.map((item) => {
+                {(dropDownData as IDropDownPhotoData[]).map((item) => {
                   return (
                     <ListboxOption
                       key={item.key}
                       value={item}
-                      className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
+                      className="group flex cursor-pointer justify-between items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
                     >
+                      <div className="text-sm/6 text-white capitalize">{item.key}</div>
+
                       <CheckIcon className="invisible size-4 text-white group-data-[selected]:visible" />
-                      <div className="text-sm/6 text-white">{item.key}</div>
                     </ListboxOption>
                   )
                 })}
@@ -129,15 +145,57 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media }) => {
         )}
 
         {media.type === 'Video' && (
-          <Button
-            disabled={isProcessing}
-            size="sm"
-            onClick={() => {
-              handleDownload()
-            }}
-          >
-            download Video
-          </Button>
+          <div className="flex">
+            <Button
+              disabled={isProcessing}
+              size="sm"
+              onClick={() => {
+                handleDownload()
+              }}
+              className="rounded-r-none capitalize"
+            >
+              {isProcessing && <Spinner size="xs" />}
+              download
+            </Button>
+
+            <Listbox
+              value={selectedVideoValue}
+              onChange={(item) => {
+                setSelectedVideoValue(item)
+              }}
+            >
+              <ListboxButton
+                className={buttonVariants({ variant: 'default', size: 'sm', className: 'rounded-l-none' })}
+              >
+                <ChevronDown className="transition-transform size-4" />
+              </ListboxButton>
+
+              <ListboxOptions
+                anchor="bottom end"
+                className={'min-w-48 bg-primary text-accent rounded-md text-sm font-medium px-2 py-2 z-50'}
+              >
+                {sortData(dropDownData as IDropDownVideoData[]).map((item) => {
+                  return (
+                    <ListboxOption
+                      key={item.id}
+                      value={item}
+                      className="group cursor-pointer flex justify-between items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white/10"
+                    >
+                      <div className="text-sm text-white capitalize flex items-center gap-2">
+                        <span>
+                          {item.quality} {`(${item.width}x${item.height})`}
+                        </span>
+
+                        <span className="text-xs whitespace-nowrap text-muted-foreground">{getSize(item.size)}</span>
+                      </div>
+
+                      <CheckIcon className="invisible size-4 text-white group-data-[selected]:visible flex-shrink-0" />
+                    </ListboxOption>
+                  )
+                })}
+              </ListboxOptions>
+            </Listbox>
+          </div>
         )}
       </div>
     </div>

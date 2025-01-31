@@ -8,7 +8,13 @@ export const Dropdown = forwardRef<
   {
     data: Array<{ name: string; [key: string]: any }>
     selected: { name: string; [key: string]: any }
-    setSelected: (item: { name: string; [key: string]: any }) => void
+    setSelected: React.Dispatch<
+      React.SetStateAction<{
+        id: number
+        name: string
+        label: string
+      }>
+    >
     className?: string
   }
 >(({ data = [], className, selected, setSelected }, ref) => {
@@ -20,7 +26,7 @@ export const Dropdown = forwardRef<
           'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25'
         )}
       >
-        <span className="font-bold">{selected.label}</span>
+        <span className="font-medium">{selected?.name}</span>
 
         <ChevronDownIcon
           className="flex-shrink-0 group pointer-events-none absolute top-2.5 right-2.5 size-4"
@@ -38,13 +44,13 @@ export const Dropdown = forwardRef<
       >
         {data.map((item) => (
           <ListboxOption
-            key={item.name}
+            key={item.id}
             value={item}
-            className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-black/10"
+            className="group flex cursor-pointer items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-black/10"
           >
             <CheckIcon className="invisible size-4 flex-shrink-0 group-data-[selected]:visible" />
 
-            <div className="text-sm/6 text-black">{item.label}</div>
+            <div className="text-sm/6 text-black">{item.name}</div>
           </ListboxOption>
         ))}
       </ListboxOptions>

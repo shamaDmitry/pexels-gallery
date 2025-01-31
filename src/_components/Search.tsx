@@ -7,7 +7,6 @@ import { pexelClient } from '@/utils/pexelClient'
 import { Collection } from 'pexels'
 import { Headline } from './Headline'
 import { NavLink } from 'react-router'
-// import useClickOutside from '@/hooks/useClickOutside'
 
 const data = [
   { id: 1, name: 'photos' },
@@ -33,10 +32,6 @@ const Search: FC<SearchProps> = ({ className }) => {
       setSearchTerm('')
     }
   }
-
-  // useClickOutside(inputRef, () => {
-  //   setShowDropDown(false)
-  // })
 
   useEffect(() => {
     pexelClient.collections.featured({ per_page: 4 }).then((res) => {
