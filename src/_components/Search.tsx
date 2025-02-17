@@ -6,7 +6,8 @@ import { useSearch, UseSearchInterface } from '@/stores/useSearch'
 import { pexelClient } from '@/utils/pexelClient'
 import { Collection } from 'pexels'
 import { Headline } from './Headline'
-import { NavLink } from 'react-router'
+import { Link, NavLink, useNavigate } from 'react-router'
+import useClickOutside from '@/hooks/useClickOutside'
 
 const data = [
   { id: 1, name: 'photos' },
@@ -18,18 +19,22 @@ interface SearchProps {
 }
 
 const Search: FC<SearchProps> = ({ className }) => {
+  const navigate = useNavigate()
+
   const [searchTerm, setSearchTerm] = useState('')
   const [showDropDown, setShowDropDown] = useState(false) // Add new state variable
   const [collections, setCollections] = useState<Collection[]>([])
 
-  const inputRef = useRef(null)
+  const dropDownRef = useRef(null)
   const { recentSearch, setRecentSearch, searchType, setSearchType } = useSearch() as UseSearchInterface
 
   const handleSearch = () => {
     if (searchTerm.length > 0) {
-      setRecentSearch([...recentSearch, searchTerm])
+      setRecentSearch([...recentSearch, { type: searchType.name, name: searchTerm }])
 
       setSearchTerm('')
+
+      navigate(`/search?searchTerm=${searchTerm}&type=${searchType.name}`)
     }
   }
 
@@ -40,6 +45,10 @@ const Search: FC<SearchProps> = ({ className }) => {
       }
     })
   }, [])
+
+  useClickOutside(dropDownRef, () => {
+    setShowDropDown(false)
+  })
 
   return (
     <div className={clsx('relative', className)}>
@@ -84,41 +93,58 @@ const Search: FC<SearchProps> = ({ className }) => {
         </div>
 
         <input
-          ref={inputRef}
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search..."
           className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           onFocus={() => setShowDropDown(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch()
+            }
+          }}
         />
+
         <button className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onClick={handleSearch}>
           <SearchIcon className="w-5 h-5" />
         </button>
       </div>
 
-      {showDropDown && (
-        <div className="absolute top-full left-0 w-full bg-white p-4 border shadow z-10 mt-4 rounded-lg">
+      {showDropDown && recentSearch.length > 0 && (
+        <div
+          ref={dropDownRef}
+          className="absolute top-full left-0 w-full bg-white p-4 border shadow z-10 mt-4 rounded-lg"
+        >
           {recentSearch && recentSearch.length > 0 && (
             <div className="mb-4">
               <div className="flex justify-between items-center gap-4 mb-4">
                 <h3 className="text-lg font-semibold mb-2">Recent Searches</h3>
 
-                <button className="text-sm font-medium hover:opacity-70" onClick={() => setRecentSearch([])}>
+                <button
+                  className="text-sm font-medium hover:opacity-70"
+                  onClick={() => {
+                    setRecentSearch([])
+                    setShowDropDown(false)
+                  }}
+                >
                   Clear
                 </button>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {recentSearch.map((search, index) => (
-                  <div
-                    key={index}
-                    className="border border-gray-300 rounded-md px-2 py-1 text-sm flex items-center gap-1"
-                  >
-                    <SearchIcon className="size-4" />
-                    {search}
-                  </div>
-                ))}
+                {recentSearch.map((search, index) => {
+                  return (
+                    <Link
+                      to={`/search?searchTerm=${search.name}&type=${search.type}`}
+                      key={index}
+                      className="border border-gray-300 rounded-md px-2 py-1 text-sm flex items-center gap-1"
+                    >
+                      <SearchIcon className="size-4" />
+                      {search.name}
+                    </Link>
+                  )
+                })}
               </div>
 
               <hr className="my-4" />
@@ -129,11 +155,13 @@ const Search: FC<SearchProps> = ({ className }) => {
                     Collections
                   </Headline>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {collections.map((collection: Collection) => {
                       return (
-                        <NavLink to={`collection/${collection.id}`} key={collection.id} className="">
-                          <Headline tag="h4">{collection.title}</Headline>
+                        <NavLink to={`collection/${collection.id}`} key={collection.id} className="group">
+                          <Headline tag="h4" className="group-hover:underline">
+                            {collection.title}
+                          </Headline>
 
                           <div className="text-sm">
                             {collection.photos_count} photos / {collection.videos_count} videos

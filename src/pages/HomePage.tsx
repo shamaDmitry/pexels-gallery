@@ -9,7 +9,7 @@ interface HomePageProps {
 export const HomePage: FC<HomePageProps> = () => {
   return (
     <MainLayout>
-      <Header />
+      <Header className="h-screen" />
     </MainLayout>
   )
 }

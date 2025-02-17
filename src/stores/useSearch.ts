@@ -1,10 +1,15 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+type RecentSearch = {
+  type: string
+  name: string
+}
+
 export interface UseSearchInterface {
   searchType: { name: string; id: number }
-  recentSearch: string[]
-  setRecentSearch: React.Dispatch<React.SetStateAction<string[]>>
+  recentSearch: RecentSearch[]
+  setRecentSearch: React.Dispatch<React.SetStateAction<RecentSearch[]>>
   setSearchType: (searchType: { name: string; id: number }) => void
 }
 
@@ -21,7 +26,7 @@ export const useSearch = create(
       setSearchType: (searchType: { name: string; id: number }) => {
         return set({ searchType })
       },
-      setRecentSearch: (recentSearch: string[]) => {
+      setRecentSearch: (recentSearch: RecentSearch[]) => {
         return set({ recentSearch })
       }
     }),

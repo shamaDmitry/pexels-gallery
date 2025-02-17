@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button'
 import { MainLayout } from '@/Layouts/MainLayout'
 import useCollection from '@/stores/useCollection'
 import { pexelClient } from '@/utils/pexelClient'
+import { ArrowLeft } from 'lucide-react'
 import { Photo, Video } from 'pexels'
 import { useEffect, useState } from 'react'
 
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 
 const filterData = [
   {
@@ -31,7 +32,7 @@ const filterData = [
 
 export const CollectionPage = () => {
   const { id } = useParams<{ id: string }>()
-
+  const navigate = useNavigate()
   const { getMediaCount, filterMedia } = useCollection((state) => state)
 
   const [media, setMedia] = useState<Photo[] | Video[] | []>([])
@@ -78,7 +79,14 @@ export const CollectionPage = () => {
   return (
     <MainLayout className="py-5">
       <div className="container">
-        <Headline className="mb-8">Collection {id}</Headline>
+        <Headline className="mb-8 flex items-center gap-2">
+          <Button variant="outline" className="capitalize" onClick={() => navigate(-1)}>
+            <ArrowLeft />
+            go back
+          </Button>
+
+          <span>Collection {id}</span>
+        </Headline>
 
         <div className="flex items-center gap-3 mb-8">
           <span>Photos {getMediaCount(media as Photo[], 'Photo')}</span>/
