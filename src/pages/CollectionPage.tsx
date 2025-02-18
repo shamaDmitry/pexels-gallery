@@ -1,12 +1,11 @@
 import { Dropdown } from '@/_components/Dropdown'
 import { Headline } from '@/_components/Headline'
-import LoadMoreSpinner from '@/_components/LoadMoreSpinner'
 import { MediaItem } from '@/_components/MediaItem'
 import { Button } from '@/components/ui/button'
 import { MainLayout } from '@/Layouts/MainLayout'
 import useCollection from '@/stores/useCollection'
 import { pexelClient } from '@/utils/pexelClient'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Photo, Video } from 'pexels'
 import { useEffect, useState } from 'react'
 
@@ -107,7 +106,11 @@ export const CollectionPage = () => {
           })}
         </div>
 
-        {isLoading && <LoadMoreSpinner className="my-5" size={32} />}
+        {isLoading && (
+          <div className="my-5 flex items-center justify-center">
+            <Loader2 className="animate-spin" />
+          </div>
+        )}
 
         {!isEnd && !isLoading && (
           <div className="text-center my-5">

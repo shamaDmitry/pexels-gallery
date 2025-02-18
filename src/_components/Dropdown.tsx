@@ -23,7 +23,7 @@ export const Dropdown = forwardRef<
       <ListboxButton
         className={clsx(
           'min-w-40 border hover:bg-gray-50 relative block w-full rounded-lg py-1.5 pr-8 pl-3 text-left text-sm/6',
-          'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25'
+          'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25 dark:hover:bg-transparent'
         )}
       >
         <span className="font-medium">{selected?.name}</span>
@@ -39,7 +39,7 @@ export const Dropdown = forwardRef<
         transition
         className={clsx(
           'w-[var(--button-width)] rounded-xl border p-1 [--anchor-gap:5px] focus:outline-none',
-          'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 bg-white'
+          'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 bg-white dark:bg-secondary'
         )}
       >
         {data.map((item) => (
@@ -50,7 +50,7 @@ export const Dropdown = forwardRef<
           >
             <CheckIcon className="invisible size-4 flex-shrink-0 group-data-[selected]:visible" />
 
-            <div className="text-sm/6 text-black">{item.name}</div>
+            <div className="text-sm/6 text-black dark:text-white">{item.name}</div>
           </ListboxOption>
         ))}
       </ListboxOptions>

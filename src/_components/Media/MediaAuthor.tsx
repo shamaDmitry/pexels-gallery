@@ -88,7 +88,7 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media, dropDownDa
       )}
     >
       <Link to={media.url} target="_blank" className="flex items-center gap-2 relative">
-        <div className="size-8 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center flex-shrink-0">
+        <div className="size-8 rounded-full overflow-hidden bg-slate-200 flex items-center justify-center flex-shrink-0 dark:bg-slate-500">
           <User className="size-5" />
         </div>
 
@@ -104,7 +104,7 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media, dropDownDa
               onClick={() => {
                 handleDownload()
               }}
-              className="rounded-r-none capitalize"
+              className="rounded-r-none capitalize dark:bg-slate-500 dark:text-white"
             >
               {isProcessing && <Spinner size="xs" />}
               download
@@ -117,14 +117,20 @@ export const MediaAuthor: FC<MediaAuthorProps> = ({ className, media, dropDownDa
               }}
             >
               <ListboxButton
-                className={buttonVariants({ variant: 'default', size: 'sm', className: 'rounded-l-none' })}
+                className={buttonVariants({
+                  variant: 'default',
+                  size: 'sm',
+                  className: 'rounded-l-none dark:bg-secondary dark:text-white'
+                })}
               >
                 <ChevronDown className="transition-transform size-4" />
               </ListboxButton>
 
               <ListboxOptions
                 anchor="bottom end"
-                className={'w-48 bg-primary text-accent rounded-md text-sm font-medium px-2 py-2 z-50'}
+                className={
+                  'w-48 bg-primary text-accent dark:bg-slate-500 rounded-md text-sm font-medium px-2 py-2 z-50'
+                }
               >
                 {(dropDownData as IDropDownPhotoData[]).map((item) => {
                   return (

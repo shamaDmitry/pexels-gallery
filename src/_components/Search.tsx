@@ -8,6 +8,7 @@ import { Collection } from 'pexels'
 import { Headline } from './Headline'
 import { Link, NavLink, useNavigate } from 'react-router'
 import useClickOutside from '@/hooks/useClickOutside'
+import { Button } from '@/components/ui/button'
 
 const data = [
   { id: 1, name: 'photos' },
@@ -52,7 +53,7 @@ const Search: FC<SearchProps> = ({ className }) => {
 
   return (
     <div className={clsx('relative', className)}>
-      <div className="flex items-center gap-2 p-2 rounded-lg shadow bg-white">
+      <div className="flex items-center gap-2 p-2 rounded-lg shadow bg-white dark:bg-gray-800">
         <div className="relative">
           <Listbox value={searchType} onChange={setSearchType}>
             <ListboxButton
@@ -74,14 +75,14 @@ const Search: FC<SearchProps> = ({ className }) => {
               transition
               className={clsx(
                 'w-[var(--button-width)] rounded-xl border p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none',
-                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 bg-white min-w-72 z-50'
+                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 bg-white min-w-72 z-50 dark:bg-gray-800'
               )}
             >
               {data.map((item) => (
                 <ListboxOption
                   key={item.name}
                   value={item}
-                  className="group flex cursor-pointer items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[active]:bg-gray-100"
+                  className="group flex cursor-pointer items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[active]:bg-gray-100 dark:data-[active]:bg-white/10"
                 >
                   <CheckIcon className="invisible size-4 group-data-[selected]:visible flex-shrink-0" />
 
@@ -97,7 +98,7 @@ const Search: FC<SearchProps> = ({ className }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search..."
-          className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-black"
           onFocus={() => setShowDropDown(true)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -106,21 +107,22 @@ const Search: FC<SearchProps> = ({ className }) => {
           }}
         />
 
-        <button className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onClick={handleSearch}>
+        <Button size="icon" variant="outline" onClick={handleSearch}>
           <SearchIcon className="w-5 h-5" />
-        </button>
+        </Button>
       </div>
 
       {showDropDown && recentSearch.length > 0 && (
         <div
           ref={dropDownRef}
-          className="absolute top-full left-0 w-full bg-white p-4 border shadow z-10 mt-4 rounded-lg"
+          className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 p-4 border shadow z-10 mt-4 rounded-lg"
         >
           {recentSearch && recentSearch.length > 0 && (
             <div className="mb-4">
               <div className="flex justify-between items-center gap-4 mb-4">
-                <h3 className="text-lg font-semibold mb-2">Recent Searches</h3>
-
+                <Headline tag="h3" className="text-lg font-semibold mb-2">
+                  Recent Searches
+                </Headline>
                 <button
                   className="text-sm font-medium hover:opacity-70"
                   onClick={() => {

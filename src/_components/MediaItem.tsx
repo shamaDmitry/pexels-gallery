@@ -63,7 +63,7 @@ export const MediaItem: FC<MediaItemProps> = ({ media, isLoading }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="absolute left-2 top-2 p-2 rounded-full bg-slate-200 size-9 flex items-center justify-center z-10">
+        <div className="absolute left-2 top-2 p-2 rounded-full bg-slate-200 dark:bg-slate-500 size-9 flex items-center justify-center z-10">
           <VideoIcon className="size-5" />
         </div>
         <video
